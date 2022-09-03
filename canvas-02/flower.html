@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Flower Effect</title>
+    <link rel="shortcut icon" href="images/common/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Roboto:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Nunito:wght@900&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="js/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.querySelector("#canvas");
+      const flowers = [];
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      window.addEventListener("resize", function () {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+      const ctx = canvas.getContext("2d");
+      const flowerImg = new Image();
+      flowerImg.src = "images/flower01.png";
+      class Flower {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.rotation = 0;
+          this.speedX = Math.random() * 2 + 1;
+          this.speedY = Math.random() * 2 + 1;
+          this.speedR = Math.random() * 3 - 1.5;
+          this.scale = Math.random() * 20 + 30;
+        }
+        draw() {
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate((Math.PI / 180) * this.rotation);
+          ctx.drawImage(flowerImg, -this.scale / 2, -this.scale / 2, this.scale, this.scale);
+          ctx.restore();
+        }
+        update() {
+          if (this.x > canvas.width || this.y > canvas.height) {
+            this.y = 0;
+            this.x = Math.random() * canvas.width;
+            // this.speedX = Math.random() * 2 + 1;
+            // this.speedY = Math.random() * 2 + 1;
+            this.scale = Math.random() * 20 + 30;
+          }
+          this.x += this.speedX;
+          this.y += this.speedY;
+          this.rotation += this.speedR;
+          this.draw();
+        }
+      }
+      for (let i = 0; i < 50; i++) {
+        const flower = new Flower();
+        flowers.push(flower);
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        flowers.forEach(function (item, idx) {
+          item.update();
+        });
+        window.requestAnimationFrame(animate);
+        //최상위객체라서 window.는 생략해도 됨
+      }
+      animate();
+    </script>
+  </body>
+</html>

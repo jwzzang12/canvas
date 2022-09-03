@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Rain Effect</title>
+    <link rel="shortcut icon" href="images/common/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Roboto:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Nunito:wght@900&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="js/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.querySelector("#canvas");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      window.addEventListener("resize", function () {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+      const ctx = canvas.getContext("2d");
+      const mouse = {
+        x: 0,
+        y: 0,
+      };
+      const particles = [];
+      let hue = 10;
+      canvas.addEventListener("mousemove", function (e) {
+        mouse.x = e.x;
+        mouse.y = e.y;
+        particles.push(new Particle());
+      });
+      class Particle {
+        constructor() {
+          this.x = mouse.x;
+          this.y = mouse.y;
+          this.speedX = Math.random() * 4 - 2;
+          this.speedY = Math.random() * 4 - 2;
+          this.size = Math.random() * 10 + 5;
+          // this.color = "rgba(255,255,255,1)";
+          this.color = `hsl(${hue},100%,50%)`;
+        }
+        draw() {
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+
+          if (this.size > 0.2) {
+            this.size -= 0.1;
+          }
+          this.draw();
+        }
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // ctx.fillStyle = "rgba(0,0,0,0.1)";
+        // ctx.fillRect(0, 0, canvas.width, canvas.height); // 폭죽효과
+        hue += 3;
+        particles.forEach(function (item, idx) {
+          item.update();
+          if (item.size < 0.5) {
+            particles.splice(idx, 1);
+            //0.3보다 작아진것은 배열에서 빼버리기
+          }
+        });
+        window.requestAnimationFrame(animate);
+      }
+      animate();
+    </script>
+  </body>
+</html>

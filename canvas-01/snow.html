@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Snow Effect</title>
+    <link rel="shortcut icon" href="images/common/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Roboto:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Nunito:wght@900&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="js/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <canvas id="canvas"> </canvas>
+    <script>
+      const canvas = document.querySelector("#canvas");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      window.addEventListener("resize", function () {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+      const ctx = canvas.getContext("2d");
+
+      class Snow {
+        x = 0;
+        y = 0;
+        velocity = 0;
+        size = 0;
+        radius = 0;
+        t = 0;
+        tSpeed = 0;
+        constructor(_x, _y, _velocity, _radius) {
+          //construnctor _x,_y...랑 위에서 선언한 변수랑 다른 것~~~ 그래서 언더바로 구분
+          this.x = _x;
+          this.loadX = this.x;
+          this.y = _y;
+          this.velocity = _velocity;
+          this.size = Math.random() * 5 + 2;
+          this.radius = _radius;
+          this.t = Math.random() * Math.PI * 2;
+          this.tSpeed = Math.random() * 0.05 + 0.05;
+          console.log("나는 눈입니다.");
+        }
+        draw() {
+          ctx.fillStyle = "rgba(255,255,255,1)";
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          //위치, 위치, 반지름, 중심점, 얼마나 그릴건지
+          ctx.fill();
+        }
+        fall() {
+          if (this.y > canvas.height) {
+            this.y = -20;
+            this.x = Math.random() * canvas.width;
+            this.velocity = Math.random() * 3 + 3;
+          }
+          this.y = this.y + this.velocity;
+          this.x = this.loadX + Math.sin(this.t) * this.radius;
+          this.t = this.t + this.tSpeed;
+          this.draw();
+        }
+      }
+      const snows = [];
+      for (let i = 0; i < 100; i++) {
+        const snow = new Snow(i * 20, Math.random() * 800, Math.random() * 3 + 3, Math.random() * 5 + 5);
+        snows.push(snow);
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //ctx.fillStyle = "rgba(0,0,0,1)";
+        //ctx.fillRect(0, 0, canvas.width, canvas.height);
+        snows.forEach(function (item, idx) {
+          item.fall();
+        });
+        window.requestAnimationFrame(animate);
+      }
+      animate();
+      //setInterval(animate, 1);
+    </script>
+  </body>
+</html>
